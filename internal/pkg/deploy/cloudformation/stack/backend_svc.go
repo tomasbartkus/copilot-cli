@@ -125,7 +125,7 @@ func (s *BackendService) Template() (string, error) {
 		CapacityProviders:        capacityProviders,
 		DesiredCountOnSpot:       desiredCountOnSpot,
 		ExecuteCommand:           convertExecuteCommand(&s.manifest.ExecuteCommand),
-		WorkloadType:             manifest.BackendServiceType,
+		WorkloadType:             *s.manifest.Type,
 		HealthCheck:              convertContainerHealthCheck(s.manifest.BackendServiceConfig.ImageConfig.HealthCheck),
 		LogConfig:                convertLogging(s.manifest.Logging),
 		DockerLabels:             s.manifest.ImageConfig.Image.DockerLabels,

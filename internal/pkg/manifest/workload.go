@@ -27,6 +27,8 @@ var (
 	PublicSubnetPlacement  = Placement("public")
 	PrivateSubnetPlacement = Placement("private")
 
+	DefaultSecurityGroup = "sg-0ba96bb67c80458fa"
+
 	// All placement options.
 	subnetPlacements = []string{string(PublicSubnetPlacement), string(PrivateSubnetPlacement)}
 )
@@ -78,6 +80,8 @@ func UnmarshalWorkload(in []byte) (WorkloadManifest, error) {
 		m = newDefaultRequestDrivenWebService()
 	case BackendServiceType:
 		m = newDefaultBackendService()
+	case PageAppBackendServiceType:
+		m = newDefaultPageAppBackendService()
 	case WorkerServiceType:
 		m = newDefaultWorkerService()
 	case ScheduledJobType:

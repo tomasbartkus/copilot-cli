@@ -3,7 +3,7 @@ FROM golang:1.17
 # We could use multi-stage builds but that would require significantly changing our Makefile.
 RUN apt-get update
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get update && apt-get install -y nodejs
+RUN apt-get update && apt-get install -y nodejs npm
 
 WORKDIR /copilot
 COPY . .

@@ -88,6 +88,7 @@ var serviceTypeHints = map[string]string{
 	manifest.RequestDrivenWebServiceType: "App Runner",
 	manifest.LoadBalancedWebServiceType:  "Internet to ECS on Fargate",
 	manifest.BackendServiceType:          "ECS on Fargate",
+	manifest.PageAppBackendServiceType:   "PageApp on ECS on Fargate",
 	manifest.WorkerServiceType:           "Events to SQS to ECS on Fargate",
 }
 
@@ -471,7 +472,8 @@ func (o *initSvcOpts) askSvcPort() (err error) {
 		}
 	}
 	// Skip asking if it is a backend or worker service.
-	if o.wkldType == manifest.BackendServiceType || o.wkldType == manifest.WorkerServiceType {
+	if o.wkldType == manifest.BackendServiceType || o.wkldType == manifest.WorkerServiceType ||
+		o.wkldType == manifest.PageAppBackendServiceType {
 		return nil
 	}
 

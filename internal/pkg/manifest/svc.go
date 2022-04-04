@@ -25,6 +25,8 @@ const (
 	BackendServiceType = "Backend Service"
 	// WorkerServiceType is a worker service that manages the consumption of messages.
 	WorkerServiceType = "Worker Service"
+	// PageAppBackendServiceType is a page app backend service
+	PageAppBackendServiceType = "PageApp Backend Service"
 )
 
 // ServiceTypes returns the list of supported service manifest types.
@@ -34,6 +36,7 @@ func ServiceTypes() []string {
 		LoadBalancedWebServiceType,
 		BackendServiceType,
 		WorkerServiceType,
+		PageAppBackendServiceType,
 	}
 }
 
@@ -215,6 +218,8 @@ func (a *AdvancedCount) validScalingFields() []string {
 		return []string{"cpu_percentage", "memory_percentage", "requests", "response_time"}
 	case BackendServiceType:
 		return []string{"cpu_percentage", "memory_percentage"}
+	case PageAppBackendServiceType:
+		return []string{"cpu_percentage", "memory_percentage"}
 	case WorkerServiceType:
 		return []string{"cpu_percentage", "memory_percentage", "queue_delay"}
 	default:
@@ -227,6 +232,8 @@ func (a *AdvancedCount) hasScalingFieldsSet() bool {
 	case LoadBalancedWebServiceType:
 		return a.CPU != nil || a.Memory != nil || a.Requests != nil || a.ResponseTime != nil
 	case BackendServiceType:
+		return a.CPU != nil || a.Memory != nil
+	case PageAppBackendServiceType:
 		return a.CPU != nil || a.Memory != nil
 	case WorkerServiceType:
 		return a.CPU != nil || a.Memory != nil || !a.QueueScaling.IsEmpty()

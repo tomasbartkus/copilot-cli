@@ -33,8 +33,8 @@ release: package-custom-resources compile-darwin compile-linux compile-windows p
 
 .PHONY: release-docker
 release-docker:
-	docker build -t aws/copilot . &&\
-	docker create -ti --name amazon-ecs-copilot-builder aws/copilot &&\
+	docker build -t home24/copilot . &&\
+	docker create -ti --name amazon-ecs-copilot-builder home24/copilot &&\
 	docker cp amazon-ecs-copilot-builder:/copilot/bin/local/ . &&\
 	docker rm -f amazon-ecs-copilot-builder
 	@echo "Built binaries under ./local/"

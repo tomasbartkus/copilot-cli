@@ -380,7 +380,7 @@ func (o *deploySvcOpts) uriRecommendedActions() ([]string, error) {
 	}
 
 	network := "over the internet."
-	if o.svcType == manifest.BackendServiceType {
+	if o.svcType == manifest.BackendServiceType || o.svcType == manifest.PageAppBackendServiceType {
 		network = "with service discovery."
 	}
 	recs := []string{

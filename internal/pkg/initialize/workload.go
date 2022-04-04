@@ -295,6 +295,8 @@ func (w *WorkloadInitializer) newServiceManifest(i *ServiceProps) (encoding.Bina
 		return w.newRequestDrivenWebServiceManifest(i), nil
 	case manifest.BackendServiceType:
 		return newBackendServiceManifest(i)
+	case manifest.PageAppBackendServiceType:
+		return newPageAppBackendServiceManifest(i)
 	case manifest.WorkerServiceType:
 		return newWorkerServiceManifest(i)
 	default:
@@ -351,6 +353,19 @@ func (w *WorkloadInitializer) newRequestDrivenWebServiceManifest(i *ServiceProps
 
 func newBackendServiceManifest(i *ServiceProps) (*manifest.BackendService, error) {
 	return manifest.NewBackendService(manifest.BackendServiceProps{
+		WorkloadProps: manifest.WorkloadProps{
+			Name:       i.Name,
+			Dockerfile: i.DockerfilePath,
+			Image:      i.Image,
+		},
+		Port:        i.Port,
+		HealthCheck: i.HealthCheck,
+		Platform:    i.Platform,
+	}), nil
+}
+
+func newPageAppBackendServiceManifest(i *ServiceProps) (*manifest.BackendService, error) {
+	return manifest.NewPageAppBackendService(manifest.BackendServiceProps{
 		WorkloadProps: manifest.WorkloadProps{
 			Name:       i.Name,
 			Dockerfile: i.DockerfilePath,

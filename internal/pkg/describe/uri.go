@@ -41,6 +41,8 @@ func NewReachableService(app, svc string, store ConfigStoreSvc) (ReachableServic
 		return NewRDWebServiceDescriber(in)
 	case manifest.BackendServiceType:
 		return NewBackendServiceDescriber(in)
+	case manifest.PageAppBackendServiceType:
+		return NewBackendServiceDescriber(in)
 	default:
 		return nil, fmt.Errorf("service %s is of type %s which cannot be reached over the network", svc, cfg.Type)
 	}

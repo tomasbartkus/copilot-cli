@@ -98,6 +98,14 @@ func newShowSvcOpts(vars showSvcVars) (*showSvcOpts, error) {
 				DeployStore:     deployStore,
 				EnableResources: opts.shouldOutputResources,
 			})
+		case manifest.PageAppBackendServiceType:
+			d, err = describe.NewBackendServiceDescriber(describe.NewServiceConfig{
+				App:             opts.appName,
+				Svc:             opts.svcName,
+				ConfigStore:     ssmStore,
+				DeployStore:     deployStore,
+				EnableResources: opts.shouldOutputResources,
+			})
 		case manifest.WorkerServiceType:
 			d, err = describe.NewWorkerServiceDescriber(describe.NewServiceConfig{
 				App:             opts.appName,

@@ -43,6 +43,25 @@ type BackendServiceProps struct {
 	Platform    PlatformArgsOrString // Optional platform configuration.
 }
 
+// NewPageAppBackendService applies the props to a default backend service configuration with
+// minimal task sizes, single replica, no healthcheck, and then returns it.
+func NewPageAppBackendService(props BackendServiceProps) *BackendService {
+	svc := newDefaultPageAppBackendService()
+	// Apply overrides.
+	svc.Name = stringP(props.Name)
+	svc.BackendServiceConfig.ImageConfig.Image.Location = stringP(props.Image)
+	svc.BackendServiceConfig.ImageConfig.Image.Build.BuildArgs.Dockerfile = stringP(props.Dockerfile)
+	svc.BackendServiceConfig.ImageConfig.Port = uint16P(props.Port)
+	svc.BackendServiceConfig.ImageConfig.HealthCheck = props.HealthCheck
+	svc.BackendServiceConfig.Platform = props.Platform
+	if isWindowsPlatform(props.Platform) {
+		svc.BackendServiceConfig.TaskConfig.CPU = aws.Int(MinWindowsTaskCPU)
+		svc.BackendServiceConfig.TaskConfig.Memory = aws.Int(MinWindowsTaskMemory)
+	}
+	svc.parser = template.New()
+	return svc
+}
+
 // NewBackendService applies the props to a default backend service configuration with
 // minimal task sizes, single replica, no healthcheck, and then returns it.
 func NewBackendService(props BackendServiceProps) *BackendService {
@@ -154,6 +173,43 @@ func newDefaultBackendService() *BackendService {
 			Network: NetworkConfig{
 				VPC: vpcConfig{
 					Placement: &PublicSubnetPlacement,
+				},
+			},
+		},
+	}
+}
+
+// newDefaultBackendService returns a backend service with minimal task sizes and a single replica.
+func newDefaultPageAppBackendService() *BackendService {
+	return &BackendService{
+		Workload: Workload{
+			Type: aws.String(PageAppBackendServiceType),
+		},
+		BackendServiceConfig: BackendServiceConfig{
+			ImageConfig: ImageWithHealthcheckAndOptionalPort{},
+			TaskConfig: TaskConfig{
+				CPU:    aws.Int(256),
+				Memory: aws.Int(512),
+				Count: Count{
+					Value: aws.Int(1),
+					AdvancedCount: AdvancedCount{ // Leave advanced count empty while passing down the type of the workload.
+						workloadType: PageAppBackendServiceType,
+					},
+				},
+				ExecuteCommand: ExecuteCommand{
+					Enable: aws.Bool(false),
+				},
+				Variables: map[string]string{
+					"NODE_ENV":             "testing",
+					"GRAPHQL_ENDPOINT_URL": "https://staging-internal.graphql.app.home24.net/query",
+					"CONTENT_SERVICE_URL":  "https://production.cosmic.service.home24.net",
+					"CORGI_BASE_URL":       "https://testing.corgi.service.home24.net",
+				},
+			},
+			Network: NetworkConfig{
+				VPC: vpcConfig{
+					Placement:      &PrivateSubnetPlacement,
+					SecurityGroups: []string{DefaultSecurityGroup},
 				},
 			},
 		},
